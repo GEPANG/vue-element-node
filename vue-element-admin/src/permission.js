@@ -6,13 +6,16 @@ import 'nprogress/nprogress.css' // progress bar style
 import { getToken } from '@/utils/auth' // get token from cookie
 import getPageTitle from '@/utils/get-page-title'
 
+//进度条加载的后面有一个小圆环，showSpinner: false --->隐藏它
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
 const whiteList = ['/login', '/auth-redirect'] // no redirect whitelist
 
+//-------------------------------------------------------
 router.beforeEach(async(to, from, next) => {
   // start progress bar
-  NProgress.start()
+  // debugger
+  NProgress.start()//显示进度条的功能
 
   // set page title
   document.title = getPageTitle(to.meta.title)
@@ -42,9 +45,12 @@ router.beforeEach(async(to, from, next) => {
           // dynamically add accessible routes
           router.addRoutes(accessRoutes)
 
+          //+++++++++++++++++++++++++++++++++++++++++++++
+          // throw new error('出错了')
+
           // hack method to ensure that addRoutes is complete
           // set the replace: true, so the navigation will not leave a history record
-          next({ ...to, replace: true })
+          next({ ...to, replace: true })//replace--------回退到空白页面
         } catch (error) {
           // remove token and go to login page to re-login
           await store.dispatch('user/resetToken')

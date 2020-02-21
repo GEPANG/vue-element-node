@@ -22,7 +22,7 @@ export function filterAsyncRoutes(routes, roles) {
   const res = []
 
   routes.forEach(route => {
-    const tmp = { ...route }
+    const tmp = { ...route }//浅拷贝
     if (hasPermission(roles, tmp)) {
       if (tmp.children) {
         tmp.children = filterAsyncRoutes(tmp.children, roles)
@@ -46,6 +46,7 @@ const mutations = {
   }
 }
 
+//------------------------------------------------
 const actions = {
   generateRoutes({ commit }, roles) {
     return new Promise(resolve => {
