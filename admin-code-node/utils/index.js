@@ -20,7 +20,13 @@ function decoded(req){
     return jwt.verify(token, PRIVATE_KEY)
 }
 
+//判断是否为对象
+function isObject(o){
+    return Object.prototype.toString.call(o) === "[object Object]"
+}
+
 module.exports={
     md5,
-    decoded
+    decoded,
+    isObject
 }

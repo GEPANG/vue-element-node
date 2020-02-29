@@ -69,10 +69,18 @@ export const asyncRoutes = [
           meta:{title:"上传图书",icon:"edit",roles:["admin"]}, //roles:允许访问的角色     
         },
         {
+          name:"bookEdit",
+          path:"/book/edit/:fileName",
+          hidden:true,
+          component:()=>import('@/views/book/edit'),
+          meta:{title:"编辑图书",icon:"edit",roles:["admin"],
+          activeMenu:'/book/list'}, //roles:允许访问的角色     
+        },
+        {
           name:"bookList",
           path:"/book/list",
-          component:()=>import('@/views/book/create'),
-          meta:{title:"图书列表",icon:"edit",roles:["editor"]}, //roles:允许访问的角色   
+          component:()=>import('@/views/book/list'),
+          meta:{title:"图书列表",icon:"list",roles:["editor"]}, //roles:允许访问的角色   
           // hidden:true,  
         }
     ]
