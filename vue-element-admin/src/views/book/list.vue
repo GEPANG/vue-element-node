@@ -32,7 +32,7 @@
                     v-for="item of categoryList" 
                     :key="item.value"
                     :label="item.label+'('+item.num+')'"
-                    :value="item.value"
+                    :value="item.label"
                 />
             </el-select>
             <el-button
@@ -72,6 +72,7 @@
             highlight-current-row
             style="width:100%"
             @sort-change="sortChange"
+            :default-sort="defaultSort"
         >
             <el-table-column
                 label="ID"
@@ -199,6 +200,7 @@
             >   
                 <template slot-scope="{row}">
                     <el-button type="text" icon="el-icon-edit" @click="handleUpdate(row)"></el-button>
+                    <el-button type="text" icon="el-icon-delete" @click="handleDelete(row)" style="color:#f56c6c"></el-button>
                 </template>                
             </el-table-column>
         </el-table>
@@ -207,14 +209,14 @@
             :total="total"  
             :page.sync="listQuery.page"
             :limit.sync="listQuery.pageSize"
-            @pagination="getList"
+            @pagination="refresh"
         />
     </div>
 </template>
 <script>
 import Pagination from '../../components/Pagination/index'
 import waves from '../../directive/waves/waves'
-import {getCategory,listBook} from '../../api/book'
+import {getCategory,listBook,deleteBook} from '../../api/book'
 import {parseTime} from '../../utils'
 
 export default {
@@ -233,29 +235,55 @@ export default {
     data(){
         return {
             listQuery:{
-                page:1,
-                pageSize:20,
-                sort:"+id",
+                // page:1,
+                // pageSize:20,
+                // sort:"+id",
             },
             showCover:false,
             categoryList:[],
             tableKey:0,
             listLoading:true,
             list:[],
-            total:0
+            total:0,
+            defaultSort:{}
         }
     },
     methods:{
         parseQuery(){
+            const query = Object.assign({},this.$route.query)
+            // console.log(this.$route.query)
+            let sort='+id'
             const listQuery={
                 page:1,
-                pageSize:20
+                pageSize:10,
+                sort
             }
-            this.listQuery={...listQuery,...this.listQuery}
+            if(query){
+                // console.log(+query.pageSize)
+                query.page && (query.page = +query.page)
+                query.pageSize && (query.pageSize = +query.pageSize)
+                query.sort && (sort = query.sort)
+            }
+            const sortSymbol=sort[0]
+            const sortColumn=sort.slice(1,sort.length)
+            this.defaultSort={
+                prop:sortColumn,
+                order:sortSymbol === '+' ? 'ascending' : 'descending'
+            }
+            this.listQuery={...listQuery,...query}
+            // console.log(this.listQuery)
         },  
         handleFilter(){
             // console.log('handleFilter',this.listQuery)
-            this.getList()
+            // this.getList()
+            this.listQuery.page=1
+            this.refresh()
+        },
+        refresh(){
+            this.$router.push({
+                path:"/book/list",
+                query:this.listQuery
+            })
         },
         handleCreate(){
             this.$router.push('/book/create')
@@ -270,7 +298,7 @@ export default {
             })
         },
         sortChange(data){
-            console.log('sortChange',data)
+            // console.log('sortChange',data)
             const {prop,order}=data    
             this.sortBy(prop,order)       
         },
@@ -289,7 +317,7 @@ export default {
                 const {list,count}=res.data
                 this.list=list          
                 this.total=count   
-                console.log(list)
+                // console.log(list)
                 this.listLoading=false
                 this.list.forEach(book=>{
                     book.titleWrapper=this.wrapperkeyword('title',book.title)
@@ -310,6 +338,24 @@ export default {
         handleUpdate(row){
             // console.log(row)
             this.$router.push(`/book/edit/${row.fileName}`)
+        },
+        handleDelete(row){
+            // console.log(row)
+            this.$confirm('此操作将永久删除该电子书，是否继续','提示',{
+                confirmButtonText:"确定",
+                cancelButtonText:"取消",
+                type:"warning"
+            }).then(()=>{
+                deleteBook(row.fileName).then(res=>{
+                    this.$notify({
+                        title:"成功",
+                        message: res.msg || "删除成功",
+                        type:'success',
+                        duration:2000
+                    })                    
+                    this.handleFilter()
+                })                
+            }).catch()
         }
     },
     created(){
@@ -318,6 +364,17 @@ export default {
     mounted(){
         this.getList()
         this.getCategoryList()
+    },
+    beforeRouteUpdate(to ,from ,next){
+        // console.log(to,from)
+        if(to.path==from.path){
+            const newQuery=Object.assign({},to.query)
+            const oldQuery=Object.assign({},from.query)
+            if(JSON.stringify(newQuery) !== JSON.stringify(oldQuery)){
+                this.getList()
+            }
+        }
+        next()
     }
 }
 </script>
