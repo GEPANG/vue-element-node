@@ -1,8 +1,3 @@
-	mysql密码:Abc123456.
-
-
-
-
 	//生成公钥/-----免密访问
 	方法一:
 		1、ssh-keygen -t rsa  之后没有生成过的按三下回车
@@ -16,7 +11,7 @@
 		访问是直接使用 ssh root@(别名)
 	
 
-
+	
 	//安装node环境
 	1、nvm安装：https://github.com/nvm-sh/nvm#installing-and-updating
 		wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.2/install.sh | bash
@@ -90,10 +85,16 @@
 		4>service mysqld status --->检测mysql的状态              service mysqld restart--->重启mysql
 		5>cat /var/log/mysqld.log | grep password      --------->查看password     --->得到mysql的密码，是字符串
 		6>show databases;------->查看数据库--------需要重置mysql密码使用：alter user 'root'@'localhost'identified by '(密码)'
+	14、到阿里云中设置安全组规则，打开3306端口，，连接，，，，报错本地不被允许（服务器）
 
+	解决报错本地不被允许（服务器）问题---->create user 'root'@'%' identified with mysql_native_password by 'Abc123456.';   ===>连接到那个地址就需要写那个地址，写（%）百分号表示所有的都能兼容。
+	可以连接到mysql了，但里面只有一个数据库，这是因为权限还没有，
+		需要执行权限分发执行：grant all privileges on *.* to 'root'@'%';
+		让上一个设置生效flush privileges;
 	
-
-
+	15、重新连接数据库，导入sql包执行后，在服务器查看：show databases;
+						     使用：use book
+						   表查看：show tables
 
 
 

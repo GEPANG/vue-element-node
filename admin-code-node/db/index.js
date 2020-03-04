@@ -1,15 +1,15 @@
 const mysql=require('mysql')
-const config=require('./config')
+const {MYSQL_CONF}=require('./config')
 const {debug}=require('../utils/constant')
 const {isObject}=require('../utils/index')
 
 function connect(){
     return  mysql.createConnection({
-        host:config.host,
-        user:config.user,
-        port:config.port,
-        password:config.password,
-        database:config.database,
+        host:MYSQL_CONF.host,
+        user:MYSQL_CONF.user,
+        port:MYSQL_CONF.port,
+        password:MYSQL_CONF.password,
+        database:MYSQL_CONF.database,
         multipleStatements: true
     })
 }
