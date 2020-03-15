@@ -2,6 +2,7 @@ const express=require('express');
 const router=require("./router")
 const fs=require('fs');
 const https=require('https')
+// const http=require('http')
 
 //解决跨域问题，使用cors
 const cors=require('cors')
@@ -24,13 +25,17 @@ httpsServer.listen(18082,function(){
     console.log('HTTPS Server is running on: https://localhost:%s', 18082)
 })
 
+
+// const httpServer=http.createServer((req,res)=>{})//创建服务
+// httpServer.listen(80)
+
 //路由之前使用bodyParser
 app.use(bodyParser.urlencoded({extended:true}))//解析参数
 app.use(bodyParser.json());//json形式
 
 app.use("/",router)
 
-const serve=app.listen(5000,function(){
-    const {address,port}=serve.address()
+const serve=app.listen(8081,function(){
+    let {address,port}=serve.address()
     console.log('Http Serve is running on http://%s:%s', address, port);
 });

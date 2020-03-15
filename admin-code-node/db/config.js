@@ -1,8 +1,14 @@
 const env = process.env.NODE_ENV;
 
-let MYSQL_CONF
-// console.log(env)
-if(env === 'dev'){
+console.log(env)
+let MYSQL_CONF={
+    host:"101.200.182.97",
+    user:"root",
+    port:"3306",
+    password:"Abc123456.",
+    database:"book"
+}
+/* if(env === 'dev'){
     MYSQL_CONF={
         host:"localhost",
         user:"root",
@@ -20,7 +26,7 @@ if(env==='prd'){
         database:"book"
     }
 }
-
+ */
 
 module.exports={
     MYSQL_CONF
